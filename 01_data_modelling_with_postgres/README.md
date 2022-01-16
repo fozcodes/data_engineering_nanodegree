@@ -8,6 +8,7 @@ directory and loads them into the DB tables in (hopefully) an organized manner.
 
 - Python >= 3.8
 - Postgres >= 12
+- Make >= 3
 
 ## Getting started
 
@@ -30,14 +31,19 @@ These will be picked up in the `create_tables.py` file for connection
 This is optional, but if you'd like to setup a virtual environment, run:
 
 ```
-$ python -m venv venv-sparkify
-$ source ./venv-sparkify/bin/activate.{WHICHEVER SHELL YOU USE}
+$ make init
 ```
 
-In either case you'll need to install dependencies:
+Or if you use Fish shell:
 
 ```
-pip install -r requirements.txt
+$ make init_fish_shell
+```
+
+In any case you'll need to install dependencies:
+
+```
+$ make install_deps
 ```
 
 ## Repo files
