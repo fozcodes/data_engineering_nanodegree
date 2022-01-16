@@ -5,9 +5,12 @@ import pandas as pd
 from pydash import py_, sorted_uniq
 
 import db
+from log import config_log
 from sql_queries import (artist_table_insert, song_select, song_table_insert,
                          songplay_table_insert, time_table_insert,
                          user_table_insert)
+
+logging = config_log()
 
 
 def clean_not_nulls(df):
@@ -146,8 +149,8 @@ def load_songplays(next_song_data, cursor):
     for _, row in next_song_data.iterrows():
 
         if song_query_variables_not_null(row):
-            print(f"Empty values for song, artist, or length in log {row}")
-            print([row.song, row.artist, row.length])
+            logging.info(f"Empty values for song, artist, or length in log {row}")
+            logging.info([row.song, row.artist, row.length])
             continue
 
         # get songid and artistid from song and artist tables
@@ -221,12 +224,12 @@ def process_data(cur, conn, filepath, func):
     """
     all_files = get_all_json_files_in_path(filepath)
     number_of_files = len(all_files)
-    print(f"{number_of_files} files found in {filepath}")
+    logging.info(f"{number_of_files} files found in {filepath}")
 
     for i, datafile in enumerate(all_files, 1):
         func(cur, datafile)
         conn.commit()
-        print(f"{i}/{number_of_files} files processed.")
+        logging.info(f"{i}/{number_of_files} files processed.")
 
 
 def main():

@@ -1,5 +1,8 @@
 import db
+from log import config_log
 from sql_queries import create_table_queries
+
+logging = config_log()
 
 
 def create_database():
@@ -48,8 +51,10 @@ def main():
     - Finally, closes the connection.
     """
     cur, conn = create_database()
+    logging.info("Database has been reset")
 
     create_tables(cur, conn)
+    logging.info("Tables created")
 
     conn.close()
 
