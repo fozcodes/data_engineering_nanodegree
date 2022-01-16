@@ -1,0 +1,8 @@
+black
+flake8
+pandas
+pandas-stubs
+pendulum
+psycopg2
+pydash
+pyright
