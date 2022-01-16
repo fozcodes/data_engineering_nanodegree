@@ -3,12 +3,17 @@ import os
 
 import pandas as pd
 import psycopg2
-from db_config import DB_HOST, DB_PASSWORD, DB_USER
 from pydash import py_
 from pydash.arrays import sorted_uniq
+
+from db_config import DB_HOST, DB_PASSWORD, DB_USER
 from sql_queries import (artist_table_insert, song_select, song_table_insert,
                          songplay_table_insert, time_table_insert,
                          user_table_insert)
+
+
+def clean_not_nulls(df):
+    return df.where(pd.notnull(df), None)
 
 
 def artist_data_from_songfile(df):
@@ -24,22 +29,9 @@ def artist_data_from_songfile(df):
     return clean_not_nulls(artist_data)
 
 
-# def song_id_data_from_songfile(df: pd.DataFrame):
-#     song_data = df.filter(items=["song_id", "artist_id"])
-#     return clean_not_nulls(song_data)
-
-# def song_data_from_songfile(df: pd.DataFrame):
-#     song_data = df.filter(items=["title", "song_id", "year", "duration"])
-#     return clean_not_nulls(song_data)
-
-
 def song_data_from_songfile(df):
     song_data = df.filter(items=["song_id", "title", "artist_id", "year", "duration"])
     return clean_not_nulls(song_data)
-
-
-def clean_not_nulls(df):
-    return df.where(pd.notnull(df), None)
 
 
 def process_song_file(cur, filepath):
@@ -52,61 +44,65 @@ def process_song_file(cur, filepath):
     cur.execute(song_table_insert, song_data.values[0])
 
 
-def process_log_file(cur, filepath):
-    # open log file
-    df = pd.read_json(filepath, lines=True)
-
-    # filter by NextSong action
-    # @NOTE: I think we mean by _page_
+def only_next_song_data(df):
     # use .copy to avoid the SettingWithCopyWarning
-    next_song_data = df.loc[df["page"] == "NextSong"].copy()
+    return df.loc[df["page"] == "NextSong"].copy()
 
-    # convert timestamp column to datetime
-    next_song_data["startTime"] = pd.to_datetime(
-        next_song_data["ts"], unit="ms", utc=True
+
+def datetime_from_mills_column(df, column_title):
+    return pd.to_datetime(df[column_title], unit="ms", utc=True)
+
+
+def user_data_from_songplays(df):
+    return df.filter(items=["userId", "firstName", "lastName", "gender", "level"])
+
+
+def song_query_variables_not_null(row):
+    return (
+        not py_([row.song, row.artist, row.length])
+        .every(lambda v: v is not None)
+        .value()
     )
 
+
+def load_start_times(next_song_data, cursor):
     # insert time data records
     start_times = sorted_uniq(list(next_song_data["startTime"]))
 
     for t in start_times:
-        cur.execute(time_table_insert, [t])
+        cursor.execute(time_table_insert, [t])
 
+
+def load_users(next_song_data, cursor):
     # load user table
-    user_df = next_song_data.filter(
-        items=["userId", "firstName", "lastName", "gender", "level"]
-    )
+    user_data = user_data_from_songplays(next_song_data)
 
     # insert user records
-    for _, row in user_df.iterrows():
-        cur.execute(user_table_insert, row)
+    for _, row in user_data.iterrows():
+        cursor.execute(user_table_insert, row)
 
+
+def load_songplays(next_song_data, cursor):
     # insert songplay records
     for _, row in next_song_data.iterrows():
 
-        if (
-            not py_([row.song, row.artist, row.length])
-            .every(lambda v: v is not None)
-            .value()
-        ):
-            print("Empty values in logs")
+        if song_query_variables_not_null(row):
+            print(f"Empty values for song, artist, or length in log {row}")
             print([row.song, row.artist, row.length])
             continue
 
         # get songid and artistid from song and artist tables
         #         print(row.song)
-        cur.execute(song_select, (row.song, row.artist))
-        results = cur.fetchone()
+        cursor.execute(song_select, (row.song, row.artist))
+        results = cursor.fetchone()
 
         if results:
-            print(results)
             song_id, artist_id = results
         else:
             song_id, artist_id = None, None
 
         # insert songplay record
         songplay_data = [
-            row.sessionId,
             row.startTime,
             row.userId,
             row.level,
@@ -116,7 +112,19 @@ def process_log_file(cur, filepath):
             row.location,
             row.userAgent,
         ]
-        cur.execute(songplay_table_insert, songplay_data)
+        cursor.execute(songplay_table_insert, songplay_data)
+
+
+def process_log_file(cursor, filepath):
+    songplay_dataframe = pd.read_json(filepath, lines=True)
+
+    next_song_data = only_next_song_data(songplay_dataframe)
+
+    next_song_data["startTime"] = datetime_from_mills_column(next_song_data, "ts")
+
+    load_start_times(next_song_data, cursor)
+    load_users(next_song_data, cursor)
+    load_songplays(next_song_data, cursor)
 
 
 def get_all_json_files_in_path(filepath):

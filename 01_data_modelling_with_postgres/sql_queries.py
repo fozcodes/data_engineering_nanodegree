@@ -21,7 +21,7 @@ INSERT INTO valid_plan_levels (level) VALUES
 
 songplay_table_create = """
 CREATE TABLE IF NOT EXISTS songplays (
-    songplay_id integer PRIMARY KEY,
+    songplay_id SERIAL,
     start_time timestamp without time zone REFERENCES times (start_time) ON UPDATE CASCADE,
     user_id integer NOT NULL,
     level VARCHAR(255) REFERENCES valid_plan_levels (level) ON UPDATE CASCADE,
@@ -53,23 +53,6 @@ CREATE TABLE IF NOT EXISTS songs (
 )
 """
 
-
-# song_table_create = ("""
-# CREATE TABLE IF NOT EXISTS songs (
-#     song_id VARCHAR(255) PRIMARY KEY,
-#     artist_id VARCHAR(255) REFERENCES artists (artist_id) ON UPDATE CASCADE,
-# )
-# """)
-
-# song_version_table_create = ("""
-# CREATE TABLE IF NOT EXISTS song_versions (
-#     title TEXT PRIMARY KEY,
-#     song_id VARCHAR(255) REFERENCES songs (song_id) ON UPDATE CASCADE,
-#     year integer NOT NULL ,
-#     duration decimal(5) NOT NULL
-# )
-# """)
-
 artist_table_create = """
 CREATE TABLE IF NOT EXISTS artists (
     artist_id VARCHAR(255) PRIMARY KEY,
@@ -96,8 +79,17 @@ CREATE TABLE IF NOT EXISTS times (
 # INSERT RECORDS
 
 songplay_table_insert = """
-    INSERT INTO songplays ( songplay_id, start_time, user_id, level, song_id, artist_id,  session_id, location, user_agent )
-    VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+    INSERT INTO songplays (
+            start_time,
+            user_id,
+            level,
+            song_id,
+            artist_id,
+            session_id,
+            location,
+            user_agent
+    )
+    VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
     ON CONFLICT
     DO NOTHING;
 
