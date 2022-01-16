@@ -2,11 +2,9 @@ import glob
 import os
 
 import pandas as pd
-import psycopg2
-from pydash import py_
-from pydash.arrays import sorted_uniq
+from pydash import py_, sorted_uniq
 
-from db_config import DB_HOST, DB_PASSWORD, DB_USER
+import db
 from sql_queries import (artist_table_insert, song_select, song_table_insert,
                          songplay_table_insert, time_table_insert,
                          user_table_insert)
@@ -232,11 +230,12 @@ def process_data(cur, conn, filepath, func):
 
 
 def main():
-    """Main entrypoint function."""
+    """Main entrypoint function.
 
-    conn = psycopg2.connect(
-        f"host={DB_HOST} dbname=sparkifydb user={DB_USER} password={DB_PASSWORD}"
-    )
+    Creates a db connection, processes song data, then log data.
+    """
+
+    conn = db.create_db_connection()
     cur = conn.cursor()
 
     process_data(cur, conn, "data/song_data", process_song_file)

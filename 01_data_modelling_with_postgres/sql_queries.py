@@ -139,12 +139,3 @@ create_table_queries = [
     time_table_create,
     songplay_table_create,
 ]
-
-drop_table_queries = [
-    songplay_table_drop,
-    user_table_drop,
-    song_table_drop,
-    artist_table_drop,
-    time_table_drop,
-    valid_plan_level_drop,
-]
