@@ -85,6 +85,12 @@ no-so-great data. The tables can be described as follows:
   integrity around plan levels. Any plans we _don't_ know about should raise
   when trying to insert into `users` or `songplays`.
 
+### Create tables / DB reset
+
+For the most part, this wasn't changed - just cleaned up a bit. It was
+refactored to use the centralized `db` functions. Also, the drop tables process
+was deleted as it was redundant - if you drop the database, you drop the tables.
+
 ### ETL Process
 
 The ETL is done from the `etl.py` script. Some logic related to DB config and
