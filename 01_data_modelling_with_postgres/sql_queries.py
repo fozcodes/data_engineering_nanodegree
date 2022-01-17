@@ -23,7 +23,7 @@ songplay_table_create = """
 CREATE TABLE IF NOT EXISTS songplays (
     songplay_id SERIAL,
     start_time timestamp without time zone REFERENCES times (start_time) ON UPDATE CASCADE,
-    user_id integer NOT NULL,
+    user_id integer REFERENCES users (user_id) ON UPDATE CASCADE,
     level VARCHAR(255) REFERENCES valid_plan_levels (level) ON UPDATE CASCADE,
     song_id VARCHAR(255) REFERENCES songs (song_id) ON UPDATE CASCADE,
     artist_id VARCHAR(255) REFERENCES artists (artist_id) ON UPDATE CASCADE,
