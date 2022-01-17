@@ -111,7 +111,7 @@ artist_table_insert = """
 """
 
 
-time_table_insert = "INSERT INTO times (start_time) VALUES (%s)"
+time_table_insert = "INSERT INTO times (start_time) VALUES (%s) ON CONFLICT DO NOTHING;"
 
 # FIND SONGS BY song title, artist name, and song duration
 

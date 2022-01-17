@@ -1,5 +1,5 @@
 import pandas as pd
-from pydash import py_, sorted_uniq
+from pydash import py_
 
 import db
 from log import config_log
@@ -119,7 +119,7 @@ def load_start_times(next_song_data, cursor):
     :param cursor: psycopg2 cursor
 
     """
-    start_times = sorted_uniq(list(next_song_data["startTime"]))
+    start_times = list(next_song_data["startTime"])
 
     for t in start_times:
         cursor.execute(time_table_insert, [t])
