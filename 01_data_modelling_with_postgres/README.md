@@ -32,12 +32,14 @@ This is optional, but if you'd like to setup a virtual environment, run:
 
 ```
 $ make init
+$ source ./venv-sparkify/bin/activate
 ```
 
 Or if you use Fish shell:
 
 ```
-$ make init_fish_shell
+$ make init
+$ source ./venv-sparkify/bin/activate.fish
 ```
 
 In any case you'll need to install dependencies:
