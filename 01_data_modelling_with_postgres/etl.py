@@ -152,7 +152,7 @@ def load_songplays(next_song_data, cursor):
             logging.info([row.song, row.artist, row.length])
             continue
 
-        cursor.execute(song_select, (row.song, row.artist))
+        cursor.execute(song_select, (row.song, row.artist, row.length))
         results = cursor.fetchone()
 
         if results:

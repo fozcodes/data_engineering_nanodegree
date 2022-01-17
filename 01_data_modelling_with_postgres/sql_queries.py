@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS songs (
     title VARCHAR(255) NOT NULL,
     artist_id VARCHAR(255) REFERENCES artists (artist_id) ON UPDATE CASCADE,
     year integer NOT NULL ,
-    duration decimal(5) NOT NULL
+    duration decimal(9, 5) NOT NULL
 )
 """
 
@@ -125,7 +125,8 @@ song_select = """
         artists as a ON a.artist_id = s.artist_id
     WHERE
         s.title = %s
-        OR a.name = %s
+        AND a.name = %s
+        AND s.duration = %s
 """
 
 # QUERY LISTS
