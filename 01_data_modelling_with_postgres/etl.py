@@ -1,6 +1,3 @@
-import glob
-import os
-
 import pandas as pd
 from pydash import py_, sorted_uniq
 
@@ -9,6 +6,7 @@ from log import config_log
 from sql_queries import (artist_table_insert, song_select, song_table_insert,
                          songplay_table_insert, time_table_insert,
                          user_table_insert)
+from utils import get_all_json_files_in_path
 
 logging = config_log()
 
@@ -192,21 +190,6 @@ def process_log_file(cursor, filepath):
     load_start_times(next_song_data, cursor)
     load_users(next_song_data, cursor)
     load_songplays(next_song_data, cursor)
-
-
-def get_all_json_files_in_path(filepath):
-    """Get all JSON files in a a given filepath
-
-    :param filepath: str - path to walk for possible files
-
-    """
-    # refactor using pydash , no pyramids
-    all_files = []
-    for root, _, files in os.walk(filepath):
-        files = glob.glob(os.path.join(root, "*.json"))
-        for f in files:
-            all_files.append(os.path.abspath(f))
-    return all_files
 
 
 def process_data(cur, conn, filepath, func):
