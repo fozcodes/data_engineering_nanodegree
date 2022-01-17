@@ -53,7 +53,8 @@ def song_data_from_songfile(df):
 
 
 def process_song_file(cur, filepath):
-    """Takes data from a songfile at a given filepath and inserts the relevant
+    """
+    Takes data from a songfile at a given filepath and inserts the relevant
     data to the database.
 
     :param cur: psycopg2 cursor
@@ -151,7 +152,6 @@ def load_songplays(next_song_data, cursor):
             logging.info([row.song, row.artist, row.length])
             continue
 
-        # get songid and artistid from song and artist tables
         cursor.execute(song_select, (row.song, row.artist))
         results = cursor.fetchone()
 
