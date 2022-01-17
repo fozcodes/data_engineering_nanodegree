@@ -126,7 +126,7 @@ song_select = """
         artists as a ON a.artist_id = s.artist_id
     WHERE
         s.title = %s
-        AND a.name = %s
+        OR a.name = %s
 """
 
 # QUERY LISTS
