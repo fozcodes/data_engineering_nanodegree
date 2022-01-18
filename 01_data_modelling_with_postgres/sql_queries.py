@@ -101,7 +101,8 @@ user_table_insert = """
 """
 
 song_table_insert = """
-    INSERT INTO songs (song_id, title, artist_id, year, duration) VALUES (%s, %s, %s, %s, %s);
+    INSERT INTO songs (song_id, title, artist_id, year, duration) VALUES (%s, %s, %s, %s, %s)
+    ON CONFLICT DO NOTHING;
 """
 
 artist_table_insert = """
