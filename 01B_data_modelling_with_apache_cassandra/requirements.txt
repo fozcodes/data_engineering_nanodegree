@@ -1,9 +1,8 @@
 black
 cassandra-driver
 flake8
+jupyterlab
 numpy
 pandas
 pandas-stubs
-pendulum
-pydash
 pyright
