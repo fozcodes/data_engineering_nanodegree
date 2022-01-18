@@ -1,0 +1,9 @@
+black
+cassandra-driver
+flake8
+numpy
+pandas
+pandas-stubs
+pendulum
+pydash
+pyright

@@ -1,0 +1,10 @@
+# Use postgres/example user/password credentials
+version: "3.7"
+
+services:
+  db:
+    image: cassandra:4
+    restart: always
+    ports:
+      - 7001:7001
+      - 9042:9042
