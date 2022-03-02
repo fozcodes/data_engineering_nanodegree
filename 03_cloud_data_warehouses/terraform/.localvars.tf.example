@@ -1,0 +1,4 @@
+aws_working_region = "us-east-1"
+redshift_user        = "fozcodes"
+redshift_pwd         = "EXQRiApf5sYoCyNLqfE5xMMlm3G3TKmzucSKcHHxKKDhwC2nsdp2iuE7VIF"
+
