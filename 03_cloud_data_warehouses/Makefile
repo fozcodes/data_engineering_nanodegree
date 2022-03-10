@@ -4,13 +4,13 @@ init:
 install_deps:
 	pip install -r requirements.txt
 
-run: reset_tables run_etl
+run: reset_tables_all run_etl_all
 
 reset_tables_all:
 	python create_tables.py --table-types staging,datamart
 
-reset_tables_all:
-	python create_tables.py --table-types staging,datamart
+run_etl_all:
+	python etl.py --table-types staging,datamart
 
 reset_tables_staging:
 	python create_tables.py --table-types staging
