@@ -1,6 +1,25 @@
+from typing import List
+
 from config import get_config
+from log import config_log
 
 config = get_config()
+logging = config_log()
+
+
+def run_queries(cur, conn, queries: List[str], msg: str):
+    """
+    Runs the given queries and logs with a message for each
+
+    :param queries: list of queries to run
+    :param msg: Message to print before each query
+
+    """
+    for query in queries:
+        logging.info(f"{msg} {query}")
+        cur.execute(query)
+        conn.commit()
+
 
 # DROP TABLES
 
