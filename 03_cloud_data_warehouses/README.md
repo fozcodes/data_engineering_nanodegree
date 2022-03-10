@@ -7,7 +7,7 @@ directory and loads them into the DB tables in (hopefully) an organized manner.
 ## Requirements
 
 - Python >= 3.8
-- Postgres >= 12
+- Terraform >= 1.1
 - Make >= 3
 
 ## Getting started
@@ -56,6 +56,21 @@ To run the ETL:
 $ make run
 ```
 
+This command will reset all tables and then run the ETLs for staging and
+fact/dimension tables (the "datamart" portion).
+
+You can also run just the "staging" or the "datamart" portion of the ETL:
+
+```
+$ make reset_tables_staging
+$ make run_etl_staging
+```
+
+The `create_tables` and `etl` scripts take an option of `--table-types`. This
+was added for convenience of not having to re-run the _entire_ pipeline every
+time something changed. You could do faster investigations on just the staging
+or final tables.
+
 ## Repo files
 
 - `create_tables.py`: Resets the database and creates the tables needed.
@@ -80,7 +95,7 @@ no-so-great data. The tables can be described as follows:
 - `users`: A Dimension Table. Holds all data related to a given user.
 - `songs`: A Dimension Table. Holds all data related to a given song.
 - `artists`: A Dimension Table. Holds all data related to a given artist.
-- `times`: A Dimension Table. Holds all data relatejd to a given datetime entry.
+- `times`: A Dimension Table. Holds all data related to a given datetime entry.
   This table uses Postgres 12+ `GENERATED` feature to generate any metadata from
   a given `start_time`, e.g., `hour`, `week`, `weekday`, etc.
 - `valid_plan_levels`: A Dimension Table. Used as an enum, so that we have data
@@ -98,10 +113,6 @@ was deleted as it was redundant - if you drop the database, you drop the tables.
 The ETL is done from the `etl.py` script. Some logic related to DB config and
 connection, parsing files, etc., was broken out into other modules for
 organization and to reduce the size of the `etl.py` file.
-
-Functions are made as small as possible with descriptive names. It's best to
-follow a Functional Programming style whenever possible to make things easy to
-reason about. `pydash` was added for this reason.
 
 ## Query examples
 
