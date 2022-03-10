@@ -1,8 +1,7 @@
-import optparse
 from typing import List
 
 import psycopg2
-from config import get_config
+from config import get_config, get_opt_parser
 from log import config_log
 from sql_queries import (create_datamart_table_queries,
                          create_staging_table_queries,
@@ -10,25 +9,7 @@ from sql_queries import (create_datamart_table_queries,
                          drop_staging_table_queries)
 
 logging = config_log()
-
-optparser = optparse.OptionParser()
-optparser.add_option(
-    "--table-types",
-    "-t",
-    dest="table_types",
-    help="A comma separated list of the table types you'd like to reset. One or all of: staging | datamart",
-)
-
-TABLE_TYPES = {
-    "staging": {
-        "drop": drop_staging_table_queries,
-        "create": create_staging_table_queries,
-    },
-    "datamart": {
-        "drop": drop_datamart_table_queries,
-        "create": create_datamart_table_queries,
-    },
-}
+optparser = get_opt_parser()
 
 
 def drop_tables(cur, conn, queries):
